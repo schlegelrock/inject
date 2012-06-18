@@ -94,6 +94,7 @@ var getXhr = (function(){
   }
 }());
 
+var injectCbQueue = [];
 var socketReady = false;
 var socket = new window.Inject.easyXDM.Socket({
   swf: swfLocation,
@@ -111,9 +112,9 @@ var socket = new window.Inject.easyXDM.Socket({
   },
   onReady: function() {
     socketReady = true;
-    if (queue.length > 0) {
-      for (var i = 0, len = queue.length; i < len; i++) {
-        queue[i]();
+    if (injectCbQueue.length > 0) {
+      for (var i = 0, len = injectCbQueue.length; i < len; i++) {
+        injectCbQueue[i]();
       }
     }
   }
@@ -141,7 +142,7 @@ function doXmlHttpRequest(module, path) {
         sendMessageNow();
       }
       else {
-        queue.push(sendMessageNow);
+        injectCbQueue.push(sendMessageNow);
       }
     }
   };
